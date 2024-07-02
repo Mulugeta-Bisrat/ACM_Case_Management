@@ -2,7 +2,8 @@ package com.acm.casemanagement.exception;
 
 public class UserException extends RuntimeException {
 
-    public UserException(String message) {
+    public UserException(String message)
+    {
         super(message);
     }
 
@@ -29,6 +30,15 @@ public class UserException extends RuntimeException {
             super(message);
         }
     }
+
+    public static class ValidationException extends UserException  {
+        public ValidationException(String message)
+        {
+            super(message);
+        }
+    }
+
+    
 
 }
 
