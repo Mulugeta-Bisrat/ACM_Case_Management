@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
+@Valid
 public class UserController {
 
     private final UserService userService;
@@ -66,11 +68,13 @@ public class UserController {
                             schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid input or user already exists",
                     content = @Content),
+            
             @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content)
+                    content = @Content),
+
     })
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<User> registerUser(@Valid @RequestBody UserDto userDto) {
         log.info("Registering user: {}", userDto.getUsername());
         User createdUser = userService.registerUser(userDto);
         URI location = URI.create(String.format("/api/users/%s", createdUser.getId()));
@@ -105,7 +109,7 @@ public class UserController {
                     content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<User> loginUser(@Valid @RequestBody LoginDto loginDto) {
         log.info("Logging in user: {}", loginDto.getUsername());
         User authenticatedUser = userService.loginUser(loginDto);
         return new ResponseEntity<>(authenticatedUser, HttpStatus.OK);
@@ -120,7 +124,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid current password", content = @Content)
     })
     @PostMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
         log.info("Resetting password for user: {}", resetPasswordDto.getUsername());
         userService.resetPassword(resetPasswordDto);
         return ResponseEntity.ok().build();
@@ -133,7 +137,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @PutMapping("/updateUser/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public User updateUser(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
         log.info("updating a user started!");
         User aUser = userService.updateUserById(id,userDto);
         log.info("updating a user completed!");
