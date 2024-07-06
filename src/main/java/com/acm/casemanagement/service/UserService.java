@@ -3,7 +3,6 @@ package com.acm.casemanagement.service;
 import com.acm.casemanagement.dto.LoginDto;
 import com.acm.casemanagement.dto.ResetPasswordDto;
 import com.acm.casemanagement.dto.UserDto;
-import com.acm.casemanagement.dto.UserValidator;
 import com.acm.casemanagement.entity.User;
 import com.acm.casemanagement.exception.UserException;
 import com.acm.casemanagement.repository.UserRepository;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
-
 
 
 
@@ -29,15 +27,9 @@ public class UserService {
     }
 
     public User registerUser(UserDto userDto) {
-        UserValidator.validateEmail(userDto.getEmail());
-        UserValidator.validateUsername(userDto.getUsername());
-        UserValidator.validatePassword(userDto.getPassword());
-        UserValidator.validateFirstname(userDto.getFirstname());
-        UserValidator.validateLastname(userDto.getLastname());
         if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
             log.error("Username already taken: {}", userDto.getUsername());
             throw new UserException.UserAlreadyExistsException("Username already taken");
-
         }
         User user = User.builder()
                 .email(userDto.getEmail())
