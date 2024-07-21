@@ -1,23 +1,27 @@
 package com.acm.casemanagement.dto;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.validation.FieldError;
 
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class ErrorResponse {
+@XmlRootElement
+public class ErrorResponse implements Serializable {
+    @XmlElement
     private int status;
+    @XmlElement
     private String message;
+    @XmlElement
     private long timestamp;
 
-    }
 
+}
 
 

@@ -3,6 +3,7 @@ package com.acm.casemanagement.exception;
 import com.acm.casemanagement.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @ControllerAdvice
@@ -43,10 +43,15 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserException.UserNotFoundException ex) {
         log.error("UserNotFoundException: {}", ex.getMessage(), ex);
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(System.currentTimeMillis())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponse);
     }
-
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
@@ -54,8 +59,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(UserException.ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserException.ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(UserException.ValidationException ex) {
         log.error("ValidationException: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), System.currentTimeMillis());
@@ -68,17 +73,15 @@ public class GlobalExceptionHandler {
         log.error("Validation failed: {}", ex.getBindingResult().getAllErrors());
 
         List<String> errors = new ArrayList<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.add(error.getField() + ": " + error.getDefaultMessage());
-        }
+        errors.add(ex.getMessage());
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message(String.join(", ", errors))
+                .message("Validation errors: " + ex.getMessage())
                 .timestamp(System.currentTimeMillis())
                 .build();
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
-
 }
+
