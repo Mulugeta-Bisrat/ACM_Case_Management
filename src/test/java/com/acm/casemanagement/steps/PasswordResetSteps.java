@@ -24,7 +24,6 @@ public class PasswordResetSteps {
     @Autowired
     private CommonSteps commonSteps;
 
-
     private final String baseUrl = "http://localhost:8080/api/users";
     private ResponseEntity<String> response;
     private UserDto userDto;
@@ -78,4 +77,3 @@ public class PasswordResetSteps {
         assertEquals(username, loginResponse.getBody().getUsername());
     }
 }
-

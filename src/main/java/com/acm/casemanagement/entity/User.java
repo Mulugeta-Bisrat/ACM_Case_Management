@@ -26,6 +26,16 @@ public class User {
     private String email;
     private String username;
     private String password;
+    private String street;
+    private String city;
+    private String state;
+    private String zipCode;
+    private String country;
+
     private boolean isActive= true;
+
+    public boolean isActive() {
+        return false;
+    }
 }
 

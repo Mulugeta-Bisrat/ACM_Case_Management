@@ -38,8 +38,16 @@ public class UserDto {
             @Pattern(regexp = "^(?=.*[a-zA-Z]).+$", message = "Password must contain at least one letter")
     })
     private String password;
+    @NotBlank(message = "Street is required")
+    private String street;
+    @NotBlank(message = "city is required")
+    private String city;
+    private String state;
+    private String zipCode;
+    @NotBlank(message = "country is required")
+    private String country;
+
 
     private boolean isActive= true;
 
 }
-

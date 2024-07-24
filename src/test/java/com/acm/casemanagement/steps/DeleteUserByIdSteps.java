@@ -1,4 +1,5 @@
 package com.acm.casemanagement.steps;
+
 import com.acm.casemanagement.entity.User;
 import com.acm.casemanagement.exception.UserException;
 import com.acm.casemanagement.repository.UserRepository;
@@ -21,7 +22,7 @@ public class DeleteUserByIdSteps {
 
     private Throwable exception;
 
-    //Senario Successfully delete an existing user by ID
+    // Scenario: Successfully delete an existing user by ID
     @Given("a user exists with ID {long} and is active")
     public void aUserExistsWithIdAndIsActive(Long id) {
         User user = User.builder()
@@ -31,7 +32,7 @@ public class DeleteUserByIdSteps {
                 .isActive(true)
                 .firstname("Firstname")
                 .lastname("Lastname")
-                .password("123456")
+                .password("Password123")  // Updated to meet validation criteria
                 .build();
 
         userRepository.save(user);
@@ -53,6 +54,7 @@ public class DeleteUserByIdSteps {
         assertFalse(user.isActive());
     }
 
+    // Scenario: Attempt to delete a non-existing user
     @When("I attempt to delete a non-existing user with ID {long}")
     public void iAttemptToDeleteANonExistingUserWithId(Long id) {
         try {

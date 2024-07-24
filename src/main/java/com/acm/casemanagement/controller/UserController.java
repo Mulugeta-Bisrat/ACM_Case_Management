@@ -68,7 +68,7 @@ public class UserController {
                             schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid input or user already exists",
                     content = @Content),
-            
+
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content),
 
@@ -101,13 +101,30 @@ public class UserController {
 
 
     @Operation(summary = "Login a user")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "Login successful",
+//                    content = {@Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = User.class))}),
+//            @ApiResponse(responseCode = "401", description = "Invalid username or password",
+//                    content = @Content)
+
+    //  })
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = User.class))}),
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = User.class)),
+                            @Content(mediaType = "application/xml",
+                                    schema = @Schema(implementation = User.class))
+                    }),
             @ApiResponse(responseCode = "401", description = "Invalid username or password",
-                    content = @Content)
+                    content = {
+                            @Content(mediaType = "application/json"),
+                            @Content(mediaType = "application/xml")
+                    })
     })
+
     @PostMapping("/login")
     public ResponseEntity<User> loginUser(@Valid @RequestBody LoginDto loginDto) {
         log.info("Logging in user: {}", loginDto.getUsername());
@@ -132,8 +149,8 @@ public class UserController {
     @Operation(summary = "UPDATE a user by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User Updated",
-            content = {@Content(mediaType = "application/json",
-            schema = @Schema(implementation = User.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @PutMapping("/updateUser/{id}")
@@ -145,5 +162,6 @@ public class UserController {
 
     }
 }
+
 
 
