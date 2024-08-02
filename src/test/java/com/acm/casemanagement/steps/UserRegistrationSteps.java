@@ -1,6 +1,5 @@
 package com.acm.casemanagement.steps;
 
-
 import com.acm.casemanagement.dto.UserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
@@ -29,14 +28,19 @@ public class UserRegistrationSteps {
     private ResponseEntity<String> response;
     private UserDto userDto;
 
-    @Given("a user with firstname {string}, lastname {string}, email {string}, username {string}, and password {string}")
-    public void aUserWithUsernameAndPassword(String firstname, String lastname, String email, String username, String password) {
+    @Given("a user with firstname {string}, lastname {string}, email {string}, username {string}, password {string}, street {string}, city {string}, state {string}, zip code {string}, and country {string}")
+    public void aUserWithDetails(String firstname, String lastname, String email, String username, String password, String street, String city, String state, String zipCode, String country) {
         userDto = UserDto.builder()
                 .username(username)
                 .firstname(firstname)
                 .lastname(lastname)
                 .email(email)
                 .password(password)
+                .street(street)
+                .city(city)
+                .state(state)
+                .zipCode(zipCode)
+                .country(country)
                 .isActive(true).build();
     }
 
@@ -44,7 +48,7 @@ public class UserRegistrationSteps {
     public void theUserIsAlreadyRegistered(String username) {
         UserDto existingUser = UserDto.builder()
                 .username(username)
-                .password("password")
+                .password("Password123")  // Ensure this meets the password validation criteria
                 .isActive(true).build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

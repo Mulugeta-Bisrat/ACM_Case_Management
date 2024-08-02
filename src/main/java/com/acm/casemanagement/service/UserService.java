@@ -1,5 +1,4 @@
 package com.acm.casemanagement.service;
-
 import com.acm.casemanagement.dto.LoginDto;
 import com.acm.casemanagement.dto.ResetPasswordDto;
 import com.acm.casemanagement.dto.UserDto;
@@ -83,7 +82,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserException.UserNotFoundException("User not found with id: " + id));
         if(!user.isActive()){
-           throw new UserException.UserNotFoundException("User already deleted with id: " + id);
+            throw new UserException.UserNotFoundException("User already deleted with id: " + id);
         }
         user.setActive(false);  // Mark user as inactive
         return userRepository.save(user);  // Save the updated user back to the repository
@@ -104,4 +103,3 @@ public class UserService {
     }
 
 }
-
