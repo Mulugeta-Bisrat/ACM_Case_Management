@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
-
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -28,15 +28,11 @@ public class UserService {
     }
 
     public User registerUser(UserDto userDto) {
-        UserValidator.validateEmail(userDto.getEmail());
-        UserValidator.validateUsername(userDto.getUsername());
-        UserValidator.validatePassword(userDto.getPassword());
-        UserValidator.validateFirstname(userDto.getFirstname());
-        UserValidator.validateLastname(userDto.getLastname());
+        UserValidator.validateUser(userDto);
+
         if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
             log.error("Username already taken: {}", userDto.getUsername());
             throw new UserException.UserAlreadyExistsException("Username already taken");
-
         }
         User user = User.builder()
                 .email(userDto.getEmail())

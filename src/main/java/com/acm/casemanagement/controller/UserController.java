@@ -1,4 +1,5 @@
 package com.acm.casemanagement.controller;
+import com.acm.casemanagement.dto.ErrorResponse;
 import com.acm.casemanagement.dto.LoginDto;
 import com.acm.casemanagement.dto.ResetPasswordDto;
 import com.acm.casemanagement.dto.UserDto;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
@@ -86,8 +88,26 @@ public class UserController {
 
     @Operation(summary = "Delete a user by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "User deleted", content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(responseCode = "204", description = "User deactivated successfully", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML_VALUE,
+                            schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "User not found", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML_VALUE, schema = @Schema(implementation = ErrorResponse.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "Bad request",
+                    content = {
+                            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)),
+                            @Content(mediaType = MediaType.APPLICATION_XML_VALUE, schema = @Schema(implementation = ErrorResponse.class))
+                    }),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = {
+                            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)),
+                            @Content(mediaType = MediaType.APPLICATION_XML_VALUE, schema = @Schema(implementation = ErrorResponse.class))
+                    })
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable Long id) {
@@ -98,8 +118,6 @@ public class UserController {
         log.info("User with id: {} deactivated successfully.", id);
         return new ResponseEntity<>(deletedUser, HttpStatus.NO_CONTENT);
     }
-
-
     @Operation(summary = "Login a user")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "200", description = "Login successful",
