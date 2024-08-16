@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name:  mysql-container-5
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: database
+      MYSQL_USER: sa
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    networks:
+      - my-network
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: final-try-acm-container-5
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/acm
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8080:8080"
+    depends_on:
+     -  mysql-db
+    networks:
+      - my-network
+volumes:
+  mysql_data:
+
+networks:
+  my-network:
+    driver: bridge
