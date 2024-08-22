@@ -1,6 +1,5 @@
-# Use the official Amazon Corretto image to create a build artifact
-# Amazon Corretto is a no-cost, multiplatform, production-ready distribution of the OpenJDK.
-FROM amazoncorretto:17 AS builder
+# Use the official Amazon Corretto image from AWS ECR Public to create a build artifact
+FROM public.ecr.aws/corretto/corretto:17 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -12,8 +11,8 @@ COPY src ./src
 # Package the application
 RUN mvn clean package -DskipTests
 
-# Use the official Amazon Corretto image to run the application
-FROM amazoncorretto:17
+# Use the official Amazon Corretto image from AWS ECR Public to run the application
+FROM public.ecr.aws/corretto/corretto:17
 
 # Set the working directory in the container
 WORKDIR /app
@@ -26,5 +25,3 @@ EXPOSE 8080
 
 # Define the command to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
