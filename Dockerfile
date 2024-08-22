@@ -1,5 +1,9 @@
-# Use the official Amazon Corretto image from AWS ECR Public to create a build artifact
+# Use the official Amazon Corretto image as the base for the builder stage
 FROM public.ecr.aws/amazoncorretto/amazoncorretto:17 AS builder
+
+# Install Maven
+RUN yum update -y && \
+    yum install -y maven
 
 # Set the working directory in the container
 WORKDIR /app
