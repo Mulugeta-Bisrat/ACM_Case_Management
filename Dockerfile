@@ -1,5 +1,5 @@
 # Use the official Amazon Corretto image from AWS ECR Public to create a build artifact
-FROM public.ecr.aws/corretto/corretto:17 AS builder
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:17 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Use the official Amazon Corretto image from AWS ECR Public to run the application
-FROM public.ecr.aws/corretto/corretto:17
+FROM public.ecr.aws/amazoncorretto/amazoncorretto:17
 
 # Set the working directory in the container
 WORKDIR /app
