@@ -1,9 +1,17 @@
 # Use the official Amazon Corretto image as the base for the builder stage
 FROM public.ecr.aws/amazoncorretto/amazoncorretto:17 AS builder
 
-# Install Maven
+# Install wget and other necessary tools
 RUN yum update -y && \
-    yum install -y maven
+    yum install -y wget tar
+
+# Install Maven 3.8.4
+RUN wget https://downloads.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz && \
+    tar -zxvf apache-maven-3.8.4-bin.tar.gz -C /opt && \
+    ln -s /opt/apache-maven-3.8.4/bin/mvn /usr/bin/mvn
+
+# Verify Maven installation
+RUN mvn -version
 
 # Set the working directory in the container
 WORKDIR /app
