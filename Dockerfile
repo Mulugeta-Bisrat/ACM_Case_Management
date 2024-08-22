@@ -1,15 +1,30 @@
-# Build stage
-FROM maven:3.8.6-eclipse-temurin-17 AS build
+# Use the official Amazon Corretto image to create a build artifact
+# Amazon Corretto is a no-cost, multiplatform, production-ready distribution of the OpenJDK.
+FROM amazoncorretto:17 AS builder
+
+# Set the working directory in the container
 WORKDIR /app
+
+# Copy the pom.xml and source code into the container
 COPY pom.xml .
-RUN mvn dependency:go-offline
 COPY src ./src
+
+# Package the application
 RUN mvn clean package -DskipTests
 
-# Run stage
-FROM eclipse-temurin:17-jdk
+# Use the official Amazon Corretto image to run the application
+FROM amazoncorretto:17
+
+# Set the working directory in the container
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copy the jar file from the builder stage
+COPY --from=builder /app/target/casemanagement-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose the port that the application will run on
 EXPOSE 8080
+
+# Define the command to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
 
