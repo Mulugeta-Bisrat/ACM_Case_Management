@@ -1,27 +1,20 @@
-# Use the build argument for Maven base image repository
-ARG MAVEN_REPO
-FROM ${MAVEN_REPO}:3.8.4-openjdk-17 AS builder
+# Use the official maven/Java image to create a build artifact.
+# https://hub.docker.com/_/maven
+FROM maven:3.8.4-openjdk-17 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the pom.xml and download dependencies first to leverage Docker cache
+# Copy the pom.xml and source code into the container
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
-
-# Copy the rest of the application source code
 COPY src ./src
 
 # Package the application
 RUN mvn clean package -DskipTests
 
-# Use the build argument for the runtime base image repository
-ARG RUNTIME_REPO
-
-# Add a check to ensure the argument is not empty
-RUN test -n "$RUNTIME_REPO" || { echo "RUNTIME_REPO is not set"; exit 1; }
-
-FROM ${RUNTIME_REPO}:17-jre-jammy
+# Use the official Eclipse Temurin OpenJDK image to run the application
+# https://hub.docker.com/_/eclipse-temurin
+FROM eclipse-temurin:17-jre-jammy
 
 # Set the working directory in the container
 WORKDIR /app
