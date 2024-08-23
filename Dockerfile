@@ -1,30 +1,21 @@
-# Use the official Amazon Corretto image as the base for the builder stage
-FROM public.ecr.aws/amazoncorretto/amazoncorretto:17 AS builder
-
-# Install wget and other necessary tools
-RUN yum update -y && \
-    yum install -y wget tar
-
-# Install Maven 3.8.4
-RUN wget https://downloads.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz && \
-    tar -zxvf apache-maven-3.8.4-bin.tar.gz -C /opt && \
-    ln -s /opt/apache-maven-3.8.4/bin/mvn /usr/bin/mvn
-
-# Verify Maven installation
-RUN mvn -version
+# Use the Maven/Java image from AWS ECR to create a build artifact
+FROM 816069124974.dkr.ecr.us-west-2.amazonaws.com/base/maven:3.8.4-openjdk-17 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the pom.xml and source code into the container
+# Copy the pom.xml and download dependencies first to leverage Docker cache
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy the rest of the application source code
 COPY src ./src
 
 # Package the application
 RUN mvn clean package -DskipTests
 
-# Use the official Amazon Corretto image from AWS ECR Public to run the application
-FROM public.ecr.aws/amazoncorretto/amazoncorretto:17
+# Use the Eclipse Temurin OpenJDK image from AWS ECR to run the application
+FROM 816069124974.dkr.ecr.us-west-2.amazonaws.com/base/eclipse-temurin:17-jre-jammy
 
 # Set the working directory in the container
 WORKDIR /app
