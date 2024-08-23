@@ -101,30 +101,13 @@ public class UserController {
 
 
     @Operation(summary = "Login a user")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "Login successful",
-//                    content = {@Content(mediaType = "application/json",
-//                            schema = @Schema(implementation = User.class))}),
-//            @ApiResponse(responseCode = "401", description = "Invalid username or password",
-//                    content = @Content)
-
-    //  })
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful",
-                    content = {
-                            @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = User.class)),
-                            @Content(mediaType = "application/xml",
-                                    schema = @Schema(implementation = User.class))
-                    }),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))}),
             @ApiResponse(responseCode = "401", description = "Invalid username or password",
-                    content = {
-                            @Content(mediaType = "application/json"),
-                            @Content(mediaType = "application/xml")
-                    })
+                    content = @Content)
     })
-
     @PostMapping("/login")
     public ResponseEntity<User> loginUser(@Valid @RequestBody LoginDto loginDto) {
         log.info("Logging in user: {}", loginDto.getUsername());
@@ -162,6 +145,3 @@ public class UserController {
 
     }
 }
-
-
-
