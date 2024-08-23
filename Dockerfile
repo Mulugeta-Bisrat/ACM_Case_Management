@@ -17,6 +17,10 @@ RUN mvn clean package -DskipTests
 
 # Use the build argument for the runtime base image repository
 ARG RUNTIME_REPO
+
+# Add a check to ensure the argument is not empty
+RUN test -n "$RUNTIME_REPO" || { echo "RUNTIME_REPO is not set"; exit 1; }
+
 FROM ${RUNTIME_REPO}:17-jre-jammy
 
 # Set the working directory in the container
@@ -30,4 +34,3 @@ EXPOSE 8080
 
 # Define the command to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
