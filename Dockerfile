@@ -1,5 +1,6 @@
-# Use the Maven/Java image from AWS ECR to create a build artifact
-FROM 816069124974.dkr.ecr.us-west-2.amazonaws.com/base/maven:3.8.4-openjdk-17 AS builder
+# Use the build argument for Maven base image repository
+ARG MAVEN_REPO
+FROM ${MAVEN_REPO}:3.8.4-openjdk-17 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -14,8 +15,9 @@ COPY src ./src
 # Package the application
 RUN mvn clean package -DskipTests
 
-# Use the Eclipse Temurin OpenJDK image from AWS ECR to run the application
-FROM 816069124974.dkr.ecr.us-west-2.amazonaws.com/base/eclipse-temurin:17-jre-jammy
+# Use the build argument for the runtime base image repository
+ARG RUNTIME_REPO
+FROM ${RUNTIME_REPO}:17-jre-jammy
 
 # Set the working directory in the container
 WORKDIR /app
